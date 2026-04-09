@@ -197,6 +197,12 @@ const SurveyResults = () => {
                     )}
                   </div>
                 )}
+
+                {stats.type === 'pairwise' && (
+                  <div className="p-4 rounded-lg bg-secondary/50 text-sm text-muted-foreground">
+                    <p>{stats.total} pairwise comparison responses collected. Export to CSV/Excel for detailed analysis.</p>
+                  </div>
+                )}
               </Card>
             );
           })}

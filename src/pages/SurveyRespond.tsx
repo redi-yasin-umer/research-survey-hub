@@ -156,6 +156,24 @@ const SurveyRespond = () => {
           />
         );
 
+      case 'ism_pairwise':
+        return (
+          <ISMPairwiseQuestion
+            question={q}
+            value={(answers[q.id] as Record<string, string>) || {}}
+            onChange={v => setAnswer(q.id, v)}
+          />
+        );
+
+      case 'ahp_pairwise':
+        return (
+          <AHPPairwiseQuestion
+            question={q}
+            value={(answers[q.id] as Record<string, number>) || {}}
+            onChange={v => setAnswer(q.id, v)}
+          />
+        );
+
       default:
         return null;
     }

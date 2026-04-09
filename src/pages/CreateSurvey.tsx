@@ -19,6 +19,8 @@ const questionTypeLabels: Record<QuestionType, string> = {
   open_ended: 'Open-Ended Text',
   dropdown: 'Dropdown',
   checkbox: 'Checkbox (Multi-select)',
+  ism_pairwise: 'ISM Pairwise',
+  ahp_pairwise: 'AHP Pairwise',
 };
 
 const CreateSurvey = () => {

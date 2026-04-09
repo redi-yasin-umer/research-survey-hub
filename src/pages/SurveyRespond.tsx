@@ -11,6 +11,8 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { useSurveyStore } from '@/store/surveyStore';
 import type { Question } from '@/types/survey';
+import ISMPairwiseQuestion from '@/components/survey/ISMPairwiseQuestion';
+import AHPPairwiseQuestion from '@/components/survey/AHPPairwiseQuestion';
 import { FileText, Send, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 

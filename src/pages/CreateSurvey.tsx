@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useSurveyStore } from '@/store/surveyStore';
-import type { Question, QuestionType, QuestionOption } from '@/types/survey';
+import type { Question, QuestionType, QuestionOption, PairwiseFactor } from '@/types/survey';
 import { Plus, Trash2, GripVertical, Save, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -88,6 +88,26 @@ const CreateSurvey = () => {
   };
 
   const needsOptions = (type: QuestionType) => ['multiple_choice', 'checkbox', 'dropdown'].includes(type);
+  const needsFactors = (type: QuestionType) => ['ism_pairwise', 'ahp_pairwise'].includes(type);
+
+  const addFactor = (qIndex: number) => {
+    const q = questions[qIndex];
+    const factors = [...(q.factors || []), { id: `f_${Date.now()}`, label: `Factor ${(q.factors?.length || 0) + 1}` }];
+    updateQuestion(qIndex, { factors });
+  };
+
+  const updateFactor = (qIndex: number, fIndex: number, label: string) => {
+    const q = questions[qIndex];
+    const factors = [...(q.factors || [])];
+    factors[fIndex] = { ...factors[fIndex], label };
+    updateQuestion(qIndex, { factors });
+  };
+
+  const removeFactor = (qIndex: number, fIndex: number) => {
+    const q = questions[qIndex];
+    const factors = (q.factors || []).filter((_, i) => i !== fIndex);
+    updateQuestion(qIndex, { factors });
+  };
 
   return (
     <div className="min-h-screen bg-background">

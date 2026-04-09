@@ -160,7 +160,7 @@ const CreateSurvey = () => {
                     <div className="flex-1">
                       <Input value={q.title} onChange={e => updateQuestion(qi, { title: e.target.value })} placeholder="Question text..." />
                     </div>
-                    <Select value={q.type} onValueChange={(v: QuestionType) => updateQuestion(qi, { type: v, ...(needsOptions(v) && !q.options?.length ? { options: [{ id: `o_${Date.now()}_1`, label: 'Option 1' }] } : {}) })}>
+                    <Select value={q.type} onValueChange={(v: QuestionType) => updateQuestion(qi, { type: v, ...(needsOptions(v) && !q.options?.length ? { options: [{ id: `o_${Date.now()}_1`, label: 'Option 1' }] } : {}), ...(needsFactors(v) && !q.factors?.length ? { factors: [{ id: `f_${Date.now()}_1`, label: 'Factor 1' }, { id: `f_${Date.now()}_2`, label: 'Factor 2' }] } : {}) })}>
                       <SelectTrigger className="w-48">
                         <SelectValue />
                       </SelectTrigger>

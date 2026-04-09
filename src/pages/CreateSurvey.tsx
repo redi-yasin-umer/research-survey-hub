@@ -204,7 +204,29 @@ const CreateSurvey = () => {
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between pt-2 border-t border-border">
+                  {needsFactors(q.type) && (
+                    <div className="space-y-2 pl-4">
+                      <Label className="text-sm text-muted-foreground">Factors for pairwise comparison:</Label>
+                      {q.factors?.map((f, fi) => (
+                        <div key={f.id} className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground w-6">{fi + 1}.</span>
+                          <Input value={f.label} onChange={e => updateFactor(qi, fi, e.target.value)} className="flex-1" />
+                          {(q.factors?.length || 0) > 2 && (
+                            <Button variant="ghost" size="icon" onClick={() => removeFactor(qi, fi)}>
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                      <Button variant="ghost" size="sm" onClick={() => addFactor(qi)}>
+                        <Plus className="w-3 h-3 mr-1" /> Add factor
+                      </Button>
+                      <p className="text-xs text-muted-foreground">
+                        {(q.factors?.length || 0)} factors → {Math.max(0, ((q.factors?.length || 0) * ((q.factors?.length || 0) - 1)) / 2)} pairs
+                      </p>
+                    </div>
+                  )}
+
                     <div className="flex items-center gap-2">
                       <Switch checked={q.required} onCheckedChange={v => updateQuestion(qi, { required: v })} />
                       <Label className="text-sm">Required</Label>

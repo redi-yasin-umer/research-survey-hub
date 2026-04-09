@@ -21,7 +21,7 @@ const SurveyRespond = () => {
   const navigate = useNavigate();
   const store = useSurveyStore();
   const survey = store.getSurvey(id || '');
-  const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
+  const [answers, setAnswers] = useState<Record<string, any>>({});
   const [submitted, setSubmitted] = useState(false);
 
   if (!survey) {
@@ -35,7 +35,7 @@ const SurveyRespond = () => {
     );
   }
 
-  const setAnswer = (qId: string, value: string | string[]) => {
+  const setAnswer = (qId: string, value: any) => {
     setAnswers(prev => ({ ...prev, [qId]: value }));
   };
 

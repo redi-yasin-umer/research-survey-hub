@@ -227,6 +227,7 @@ const CreateSurvey = () => {
                     </div>
                   )}
 
+                  <div className="flex items-center justify-between pt-2 border-t border-border">
                     <div className="flex items-center gap-2">
                       <Switch checked={q.required} onCheckedChange={v => updateQuestion(qi, { required: v })} />
                       <Label className="text-sm">Required</Label>

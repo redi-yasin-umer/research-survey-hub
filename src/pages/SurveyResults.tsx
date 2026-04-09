@@ -97,6 +97,10 @@ const SurveyResults = () => {
       return { type: 'text' as const, answers: answers as string[], total: answers.length };
     }
 
+    if (q.type === 'ism_pairwise' || q.type === 'ahp_pairwise') {
+      return { type: 'pairwise' as const, total: answers.length };
+    }
+
     return null;
   };
 

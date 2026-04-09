@@ -97,6 +97,10 @@ const SurveyResults = () => {
       return { type: 'text' as const, answers: answers as string[], total: answers.length };
     }
 
+    if (q.type === 'ism_pairwise' || q.type === 'ahp_pairwise') {
+      return { type: 'pairwise' as const, total: answers.length };
+    }
+
     return null;
   };
 
@@ -191,6 +195,12 @@ const SurveyResults = () => {
                     {stats.answers.filter(Boolean).length === 0 && (
                       <p className="text-sm text-muted-foreground">No text responses yet.</p>
                     )}
+                  </div>
+                )}
+
+                {stats.type === 'pairwise' && (
+                  <div className="p-4 rounded-lg bg-secondary/50 text-sm text-muted-foreground">
+                    <p>{stats.total} pairwise comparison responses collected. Export to CSV/Excel for detailed analysis.</p>
                   </div>
                 )}
               </Card>

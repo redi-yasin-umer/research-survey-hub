@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useSurveyStore } from '@/store/surveyStore';
-import type { Question, QuestionType, QuestionOption } from '@/types/survey';
+import type { Question, QuestionType, QuestionOption, PairwiseFactor } from '@/types/survey';
 import { Plus, Trash2, GripVertical, Save, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -19,6 +19,8 @@ const questionTypeLabels: Record<QuestionType, string> = {
   open_ended: 'Open-Ended Text',
   dropdown: 'Dropdown',
   checkbox: 'Checkbox (Multi-select)',
+  ism_pairwise: 'ISM Pairwise',
+  ahp_pairwise: 'AHP Pairwise',
 };
 
 const CreateSurvey = () => {
@@ -86,6 +88,26 @@ const CreateSurvey = () => {
   };
 
   const needsOptions = (type: QuestionType) => ['multiple_choice', 'checkbox', 'dropdown'].includes(type);
+  const needsFactors = (type: QuestionType) => ['ism_pairwise', 'ahp_pairwise'].includes(type);
+
+  const addFactor = (qIndex: number) => {
+    const q = questions[qIndex];
+    const factors = [...(q.factors || []), { id: `f_${Date.now()}`, label: `Factor ${(q.factors?.length || 0) + 1}` }];
+    updateQuestion(qIndex, { factors });
+  };
+
+  const updateFactor = (qIndex: number, fIndex: number, label: string) => {
+    const q = questions[qIndex];
+    const factors = [...(q.factors || [])];
+    factors[fIndex] = { ...factors[fIndex], label };
+    updateQuestion(qIndex, { factors });
+  };
+
+  const removeFactor = (qIndex: number, fIndex: number) => {
+    const q = questions[qIndex];
+    const factors = (q.factors || []).filter((_, i) => i !== fIndex);
+    updateQuestion(qIndex, { factors });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -138,7 +160,7 @@ const CreateSurvey = () => {
                     <div className="flex-1">
                       <Input value={q.title} onChange={e => updateQuestion(qi, { title: e.target.value })} placeholder="Question text..." />
                     </div>
-                    <Select value={q.type} onValueChange={(v: QuestionType) => updateQuestion(qi, { type: v, ...(needsOptions(v) && !q.options?.length ? { options: [{ id: `o_${Date.now()}_1`, label: 'Option 1' }] } : {}) })}>
+                    <Select value={q.type} onValueChange={(v: QuestionType) => updateQuestion(qi, { type: v, ...(needsOptions(v) && !q.options?.length ? { options: [{ id: `o_${Date.now()}_1`, label: 'Option 1' }] } : {}), ...(needsFactors(v) && !q.factors?.length ? { factors: [{ id: `f_${Date.now()}_1`, label: 'Factor 1' }, { id: `f_${Date.now()}_2`, label: 'Factor 2' }] } : {}) })}>
                       <SelectTrigger className="w-48">
                         <SelectValue />
                       </SelectTrigger>
@@ -179,6 +201,29 @@ const CreateSurvey = () => {
                       <Button variant="ghost" size="sm" onClick={() => addOption(qi)}>
                         <Plus className="w-3 h-3 mr-1" /> Add option
                       </Button>
+                    </div>
+                  )}
+
+                  {needsFactors(q.type) && (
+                    <div className="space-y-2 pl-4">
+                      <Label className="text-sm text-muted-foreground">Factors for pairwise comparison:</Label>
+                      {q.factors?.map((f, fi) => (
+                        <div key={f.id} className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground w-6">{fi + 1}.</span>
+                          <Input value={f.label} onChange={e => updateFactor(qi, fi, e.target.value)} className="flex-1" />
+                          {(q.factors?.length || 0) > 2 && (
+                            <Button variant="ghost" size="icon" onClick={() => removeFactor(qi, fi)}>
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                      <Button variant="ghost" size="sm" onClick={() => addFactor(qi)}>
+                        <Plus className="w-3 h-3 mr-1" /> Add factor
+                      </Button>
+                      <p className="text-xs text-muted-foreground">
+                        {(q.factors?.length || 0)} factors → {Math.max(0, ((q.factors?.length || 0) * ((q.factors?.length || 0) - 1)) / 2)} pairs
+                      </p>
                     </div>
                   )}
 

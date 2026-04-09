@@ -11,6 +11,8 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { useSurveyStore } from '@/store/surveyStore';
 import type { Question } from '@/types/survey';
+import ISMPairwiseQuestion from '@/components/survey/ISMPairwiseQuestion';
+import AHPPairwiseQuestion from '@/components/survey/AHPPairwiseQuestion';
 import { FileText, Send, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -19,7 +21,7 @@ const SurveyRespond = () => {
   const navigate = useNavigate();
   const store = useSurveyStore();
   const survey = store.getSurvey(id || '');
-  const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
+  const [answers, setAnswers] = useState<Record<string, any>>({});
   const [submitted, setSubmitted] = useState(false);
 
   if (!survey) {
@@ -33,7 +35,7 @@ const SurveyRespond = () => {
     );
   }
 
-  const setAnswer = (qId: string, value: string | string[]) => {
+  const setAnswer = (qId: string, value: any) => {
     setAnswers(prev => ({ ...prev, [qId]: value }));
   };
 
@@ -151,6 +153,24 @@ const SurveyRespond = () => {
             onChange={e => setAnswer(q.id, e.target.value)}
             placeholder="Type your answer..."
             rows={3}
+          />
+        );
+
+      case 'ism_pairwise':
+        return (
+          <ISMPairwiseQuestion
+            question={q}
+            value={(answers[q.id] as Record<string, string>) || {}}
+            onChange={v => setAnswer(q.id, v)}
+          />
+        );
+
+      case 'ahp_pairwise':
+        return (
+          <AHPPairwiseQuestion
+            question={q}
+            value={(answers[q.id] as Record<string, number>) || {}}
+            onChange={v => setAnswer(q.id, v)}
           />
         );
 

@@ -9,8 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useSurveyStore } from '@/store/surveyStore';
-import type { Question, QuestionType, QuestionOption, PairwiseFactor } from '@/types/survey';
-import { Plus, Trash2, GripVertical, Save, ArrowLeft } from 'lucide-react';
+import type { Question, QuestionType, QuestionOption, PairwiseFactor, InstitutionalHeader } from '@/types/survey';
+import { Plus, Trash2, GripVertical, Save, ArrowLeft, GraduationCap } from 'lucide-react';
 import { toast } from 'sonner';
 
 const questionTypeLabels: Record<QuestionType, string> = {
@@ -33,6 +33,14 @@ const CreateSurvey = () => {
   const [isPublic, setIsPublic] = useState(true);
   const [isAnonymous, setIsAnonymous] = useState(true);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [collectIdentity, setCollectIdentity] = useState(false);
+  const [header, setHeader] = useState<InstitutionalHeader>({
+    university: '', school: '', department: '', researchTitle: '',
+    purposeStatement: '', researcherName: '', researcherPhone: '',
+    researcherEmail: '', advisorName: '',
+  });
+  const updateHeader = (field: keyof InstitutionalHeader, v: string) =>
+    setHeader(prev => ({ ...prev, [field]: v }));
 
   const addQuestion = () => {
     const newQ: Question = {
@@ -82,7 +90,11 @@ const CreateSurvey = () => {
     if (questions.length === 0) { toast.error('Add at least one question'); return; }
     if (questions.some(q => !q.title.trim())) { toast.error('All questions need a title'); return; }
 
-    store.addSurvey({ title, description, instructions, isPublic, isAnonymous, questions, status });
+    store.addSurvey({
+      title, description, instructions, isPublic, isAnonymous, questions, status,
+      collectIdentity,
+      ...(collectIdentity && header.university.trim() ? { institutionalHeader: header } : {}),
+    });
     toast.success(status === 'draft' ? 'Survey saved as draft' : 'Survey published!');
     navigate('/dashboard');
   };
@@ -147,6 +159,68 @@ const CreateSurvey = () => {
               </div>
             </div>
           </div>
+        </Card>
+
+        {/* Institutional Header (any researcher worldwide) */}
+        <Card className="p-6 mb-6">
+          <div className="flex items-start justify-between gap-4 mb-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <GraduationCap className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold">Institutional Header & Respondent Identity</h2>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Optional. Fill in your university and researcher details — works for any institution worldwide.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <Switch checked={collectIdentity} onCheckedChange={setCollectIdentity} />
+              <Label>Enable</Label>
+            </div>
+          </div>
+
+          {collectIdentity && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2 space-y-2">
+                <Label>University / Institution *</Label>
+                <Input value={header.university} onChange={e => updateHeader('university', e.target.value)} placeholder="e.g. Adama Science and Technology University" maxLength={200} />
+              </div>
+              <div className="space-y-2">
+                <Label>School / Faculty</Label>
+                <Input value={header.school} onChange={e => updateHeader('school', e.target.value)} placeholder="e.g. School of Civil Engineering and Architecture" maxLength={200} />
+              </div>
+              <div className="space-y-2">
+                <Label>Department</Label>
+                <Input value={header.department} onChange={e => updateHeader('department', e.target.value)} placeholder="e.g. Department of Construction Engineering and Management" maxLength={200} />
+              </div>
+              <div className="md:col-span-2 space-y-2">
+                <Label>Research Title</Label>
+                <Textarea value={header.researchTitle} onChange={e => updateHeader('researchTitle', e.target.value)} placeholder="Full title of your research / dissertation" rows={2} maxLength={500} />
+              </div>
+              <div className="md:col-span-2 space-y-2">
+                <Label>Purpose Statement</Label>
+                <Textarea value={header.purposeStatement} onChange={e => updateHeader('purposeStatement', e.target.value)} placeholder="e.g. Results will be used strictly for academic purposes and treated with full confidentiality." rows={2} maxLength={500} />
+              </div>
+              <div className="space-y-2">
+                <Label>Researcher Name</Label>
+                <Input value={header.researcherName} onChange={e => updateHeader('researcherName', e.target.value)} placeholder="Your full name" maxLength={120} />
+              </div>
+              <div className="space-y-2">
+                <Label>Advisor / Supervisor</Label>
+                <Input value={header.advisorName} onChange={e => updateHeader('advisorName', e.target.value)} placeholder="e.g. Dr. Jane Doe" maxLength={120} />
+              </div>
+              <div className="space-y-2">
+                <Label>Researcher Phone</Label>
+                <Input value={header.researcherPhone} onChange={e => updateHeader('researcherPhone', e.target.value)} placeholder="e.g. +1 555 123 4567" maxLength={40} />
+              </div>
+              <div className="space-y-2">
+                <Label>Researcher Email</Label>
+                <Input type="email" value={header.researcherEmail} onChange={e => updateHeader('researcherEmail', e.target.value)} placeholder="you@university.edu" maxLength={150} />
+              </div>
+            </div>
+          )}
         </Card>
 
         {/* Questions */}

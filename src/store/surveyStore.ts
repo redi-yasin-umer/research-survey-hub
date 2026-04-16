@@ -35,6 +35,19 @@ const AHP_CATEGORIES = [
   { id: 'c7', label: 'Human Resource & Knowledge' },
 ];
 
+const ASTU_HEADER = {
+  university: 'Adama Science and Technology University',
+  school: 'School of Civil Engineering and Architecture',
+  department: 'Department of Construction Engineering and Management',
+  researchTitle:
+    'Success Factors and Their Interrelationships in Integrated Supply Chain and Logistics Management for Prefabricated Housing Projects in Ethiopia: An AHP–ISM–Quadrant Analysis Approach',
+  purposeStatement:
+    'Results will be used strictly for academic purposes and treated with full confidentiality.',
+  researcherName: 'Redi Yasin',
+  researcherPhone: '0923766115',
+  advisorName: 'Fikreyesus Demeke (PhD)',
+};
+
 let surveys: Survey[] = [
   {
     id: 'ism-demo',
@@ -44,6 +57,7 @@ let surveys: Survey[] = [
     isPublic: true,
     isAnonymous: false,
     collectIdentity: true,
+    institutionalHeader: ASTU_HEADER,
     createdAt: new Date().toISOString(),
     status: 'active',
     responseCount: 0,
@@ -76,6 +90,7 @@ let surveys: Survey[] = [
     isPublic: true,
     isAnonymous: false,
     collectIdentity: true,
+    institutionalHeader: ASTU_HEADER,
     createdAt: new Date().toISOString(),
     status: 'active',
     responseCount: 0,

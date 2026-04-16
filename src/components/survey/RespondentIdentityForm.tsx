@@ -3,56 +3,57 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { GraduationCap } from 'lucide-react';
-
-export interface RespondentIdentity {
-  fullName: string;
-  organization: string;
-  position: string;
-  email: string;
-  phone: string;
-  yearsExperience: string;
-  notes: string;
-}
+import type { InstitutionalHeader, RespondentIdentity } from '@/types/survey';
 
 interface Props {
   value: RespondentIdentity;
   onChange: (value: RespondentIdentity) => void;
+  header?: InstitutionalHeader;
 }
 
-const RespondentIdentityForm = ({ value, onChange }: Props) => {
+const RespondentIdentityForm = ({ value, onChange, header }: Props) => {
   const update = (field: keyof RespondentIdentity, v: string) => {
     onChange({ ...value, [field]: v });
   };
 
+  const meta: string[] = [];
+  if (header?.researcherName) meta.push(`Researcher: ${header.researcherName}`);
+  if (header?.researcherPhone) meta.push(`Phone: ${header.researcherPhone}`);
+  if (header?.researcherEmail) meta.push(`Email: ${header.researcherEmail}`);
+  if (header?.advisorName) meta.push(`Advisor: ${header.advisorName}`);
+
   return (
     <Card className="p-6 mb-6 border-primary/20">
-      {/* Institutional Header */}
-      <div className="flex items-start gap-3 mb-6 pb-6 border-b border-border">
-        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-          <GraduationCap className="w-5 h-5 text-primary" />
-        </div>
-        <div className="flex-1">
-          <h2 className="font-bold text-base text-foreground">Adama Science and Technology University</h2>
-          <p className="text-sm text-muted-foreground">School of Civil Engineering and Architecture</p>
-          <p className="text-sm text-muted-foreground">Department of Construction Engineering and Management</p>
-          <div className="mt-3 text-xs text-muted-foreground space-y-1">
-            <p>
-              This survey is part of an MSc research titled{' '}
-              <em>
-                "Success Factors and Their Interrelationships in Integrated Supply Chain and
-                Logistics Management for Prefabricated Housing Projects in Ethiopia: An
-                AHP–ISM–Quadrant Analysis Approach"
-              </em>
-              . Results will be used <strong>strictly for academic purposes</strong> and treated
-              with full confidentiality.
-            </p>
-            <p className="pt-1">
-              <strong>Researcher:</strong> Redi Yasin · <strong>Phone:</strong> 0923766115 ·{' '}
-              <strong>Advisor:</strong> Fikreyesus Demeke (PhD)
-            </p>
+      {/* Institutional Header — fully driven by survey config */}
+      {header && (
+        <div className="flex items-start gap-3 mb-6 pb-6 border-b border-border">
+          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+            <GraduationCap className="w-5 h-5 text-primary" />
+          </div>
+          <div className="flex-1">
+            {header.university && (
+              <h2 className="font-bold text-base text-foreground">{header.university}</h2>
+            )}
+            {header.school && <p className="text-sm text-muted-foreground">{header.school}</p>}
+            {header.department && (
+              <p className="text-sm text-muted-foreground">{header.department}</p>
+            )}
+            {(header.researchTitle || header.purposeStatement) && (
+              <div className="mt-3 text-xs text-muted-foreground space-y-1">
+                {header.researchTitle && (
+                  <p>
+                    This survey is part of the research titled <em>"{header.researchTitle}"</em>.
+                  </p>
+                )}
+                {header.purposeStatement && <p>{header.purposeStatement}</p>}
+              </div>
+            )}
+            {meta.length > 0 && (
+              <p className="mt-2 text-xs text-muted-foreground">{meta.join(' · ')}</p>
+            )}
           </div>
         </div>
-      </div>
+      )}
 
       {/* Respondent Identity Fields */}
       <div>
@@ -77,7 +78,7 @@ const RespondentIdentityForm = ({ value, onChange }: Props) => {
               id="r-org"
               value={value.organization}
               onChange={e => update('organization', e.target.value)}
-              placeholder="e.g. Adama Science and Technology University"
+              placeholder="e.g. Your university or company"
               maxLength={150}
             />
           </div>
@@ -118,7 +119,7 @@ const RespondentIdentityForm = ({ value, onChange }: Props) => {
               id="r-phone"
               value={value.phone}
               onChange={e => update('phone', e.target.value)}
-              placeholder="e.g. 09XXXXXXXX"
+              placeholder="e.g. +1 555 123 4567"
               maxLength={30}
             />
           </div>

@@ -268,6 +268,88 @@ const CreateSurvey = () => {
                 <Label>Researcher Email</Label>
                 <Input type="email" value={header.researcherEmail} onChange={e => updateHeader('researcherEmail', e.target.value)} placeholder="you@university.edu" maxLength={150} />
               </div>
+
+              {/* Methodology fields */}
+              <div className="md:col-span-2 space-y-2">
+                <Label>Objective of the Study</Label>
+                <Textarea value={header.objective || ''} onChange={e => updateHeader('objective', e.target.value)} placeholder="State the main objective(s) of your study..." rows={3} maxLength={1000} />
+              </div>
+              <div className="md:col-span-2 space-y-2">
+                <Label>Method Description</Label>
+                <Textarea value={header.methodDescription || ''} onChange={e => updateHeader('methodDescription', e.target.value)} placeholder="Briefly describe the method (e.g. AHP–ISM–Quadrant Analysis)..." rows={3} maxLength={1500} />
+              </div>
+              <div className="md:col-span-2 space-y-2">
+                <Label>Instruction Description</Label>
+                <Textarea value={header.instructionDescription || ''} onChange={e => updateHeader('instructionDescription', e.target.value)} placeholder="General instructions for completing the questionnaire..." rows={3} maxLength={1500} />
+              </div>
+              <div className="md:col-span-2 space-y-2">
+                <Label>Example Description</Label>
+                <Textarea value={header.exampleDescription || ''} onChange={e => updateHeader('exampleDescription', e.target.value)} placeholder='e.g. CASE 1: If factor "A" is extremely important than "B" mark "9" to the LEFT of the center...' rows={4} maxLength={2000} />
+              </div>
+
+              {/* Categories × Success Factors table */}
+              <div className="md:col-span-2 space-y-3 pt-2 border-t border-border">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div>
+                    <Label className="text-base">Categories & Success Factors</Label>
+                    <p className="text-xs text-muted-foreground">Editable table shown to respondents for context.</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button type="button" variant="outline" size="sm" onClick={loadSampleCategories}>
+                      Load sample
+                    </Button>
+                    <Button type="button" variant="outline" size="sm" onClick={addCategory}>
+                      <Plus className="w-3 h-3 mr-1" /> Add category
+                    </Button>
+                  </div>
+                </div>
+
+                {(header.categories || []).length === 0 && (
+                  <p className="text-xs text-muted-foreground italic">No categories yet. Click "Add category" or "Load sample".</p>
+                )}
+
+                <div className="space-y-3">
+                  {(header.categories || []).map((cat, ci) => (
+                    <div key={cat.id} className="rounded-lg border border-border p-3 space-y-2 bg-secondary/30">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground w-6">{ci + 1}.</span>
+                        <Input
+                          value={cat.category}
+                          onChange={e => updateCategory(ci, { category: e.target.value })}
+                          placeholder="Category name (e.g. Strategic & Policy)"
+                          className="flex-1 font-medium"
+                          maxLength={150}
+                        />
+                        <Button type="button" variant="ghost" size="icon" onClick={() => removeCategory(ci)} className="text-destructive shrink-0">
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
+                      <div className="pl-8 space-y-1.5">
+                        {cat.factors.map((f, fi) => (
+                          <div key={fi} className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground">•</span>
+                            <Input
+                              value={f}
+                              onChange={e => updateFactorRow(ci, fi, e.target.value)}
+                              placeholder={`Success factor ${fi + 1}`}
+                              className="flex-1 h-8 text-sm"
+                              maxLength={200}
+                            />
+                            {cat.factors.length > 1 && (
+                              <Button type="button" variant="ghost" size="icon" onClick={() => removeFactorRow(ci, fi)} className="h-7 w-7">
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            )}
+                          </div>
+                        ))}
+                        <Button type="button" variant="ghost" size="sm" onClick={() => addFactorRow(ci)} className="h-7 text-xs">
+                          <Plus className="w-3 h-3 mr-1" /> Add success factor
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
         </Card>

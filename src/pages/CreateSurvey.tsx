@@ -9,8 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useSurveyStore } from '@/store/surveyStore';
-import type { Question, QuestionType, QuestionOption, PairwiseFactor } from '@/types/survey';
-import { Plus, Trash2, GripVertical, Save, ArrowLeft } from 'lucide-react';
+import type { Question, QuestionType, QuestionOption, PairwiseFactor, InstitutionalHeader } from '@/types/survey';
+import { Plus, Trash2, GripVertical, Save, ArrowLeft, GraduationCap } from 'lucide-react';
 import { toast } from 'sonner';
 
 const questionTypeLabels: Record<QuestionType, string> = {
@@ -33,6 +33,14 @@ const CreateSurvey = () => {
   const [isPublic, setIsPublic] = useState(true);
   const [isAnonymous, setIsAnonymous] = useState(true);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [collectIdentity, setCollectIdentity] = useState(false);
+  const [header, setHeader] = useState<InstitutionalHeader>({
+    university: '', school: '', department: '', researchTitle: '',
+    purposeStatement: '', researcherName: '', researcherPhone: '',
+    researcherEmail: '', advisorName: '',
+  });
+  const updateHeader = (field: keyof InstitutionalHeader, v: string) =>
+    setHeader(prev => ({ ...prev, [field]: v }));
 
   const addQuestion = () => {
     const newQ: Question = {
@@ -82,7 +90,11 @@ const CreateSurvey = () => {
     if (questions.length === 0) { toast.error('Add at least one question'); return; }
     if (questions.some(q => !q.title.trim())) { toast.error('All questions need a title'); return; }
 
-    store.addSurvey({ title, description, instructions, isPublic, isAnonymous, questions, status });
+    store.addSurvey({
+      title, description, instructions, isPublic, isAnonymous, questions, status,
+      collectIdentity,
+      ...(collectIdentity && header.university.trim() ? { institutionalHeader: header } : {}),
+    });
     toast.success(status === 'draft' ? 'Survey saved as draft' : 'Survey published!');
     navigate('/dashboard');
   };

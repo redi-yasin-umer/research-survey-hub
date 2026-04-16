@@ -40,6 +40,22 @@ export interface InstitutionalHeader {
   researcherPhone?: string;
   researcherEmail?: string;
   advisorName?: string;
+  /** Objective of the study */
+  objective?: string;
+  /** Method description */
+  methodDescription?: string;
+  /** Instruction description (general) */
+  instructionDescription?: string;
+  /** Worked example description (e.g. CASE 1 / CASE 2 explanation) */
+  exampleDescription?: string;
+  /** Editable Category → Success Factors table for AHP/ISM context */
+  categories?: CategoryGroup[];
+}
+
+export interface CategoryGroup {
+  id: string;
+  category: string;
+  factors: string[];
 }
 
 export interface Survey {

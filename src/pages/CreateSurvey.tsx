@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useSurveyStore } from '@/store/surveyStore';
-import type { Question, QuestionType, QuestionOption, PairwiseFactor, InstitutionalHeader } from '@/types/survey';
+import type { Question, QuestionType, QuestionOption, PairwiseFactor, InstitutionalHeader, CategoryGroup } from '@/types/survey';
 import { Plus, Trash2, GripVertical, Save, ArrowLeft, GraduationCap } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -38,9 +38,58 @@ const CreateSurvey = () => {
     university: '', school: '', department: '', researchTitle: '',
     purposeStatement: '', researcherName: '', researcherPhone: '',
     researcherEmail: '', advisorName: '',
+    objective: '', methodDescription: '', instructionDescription: '',
+    exampleDescription:
+      'CASE 1: If you think factor "A" is extremely important than factor "B" mark "9" to the LEFT of the center.\nCASE 2: If you think factor "B" is extremely important than factor "A" mark "9" to the RIGHT of the center.',
+    categories: [],
   });
-  const updateHeader = (field: keyof InstitutionalHeader, v: string) =>
+  const updateHeader = <K extends keyof InstitutionalHeader>(field: K, v: InstitutionalHeader[K]) =>
     setHeader(prev => ({ ...prev, [field]: v }));
+
+  // Category table helpers
+  const addCategory = () => {
+    const next: CategoryGroup = { id: `cat_${Date.now()}`, category: '', factors: [''] };
+    updateHeader('categories', [...(header.categories || []), next]);
+  };
+  const updateCategory = (idx: number, patch: Partial<CategoryGroup>) => {
+    const list = [...(header.categories || [])];
+    list[idx] = { ...list[idx], ...patch };
+    updateHeader('categories', list);
+  };
+  const removeCategory = (idx: number) => {
+    updateHeader('categories', (header.categories || []).filter((_, i) => i !== idx));
+  };
+  const addFactorRow = (catIdx: number) => {
+    const list = [...(header.categories || [])];
+    list[catIdx] = { ...list[catIdx], factors: [...list[catIdx].factors, ''] };
+    updateHeader('categories', list);
+  };
+  const updateFactorRow = (catIdx: number, fIdx: number, value: string) => {
+    const list = [...(header.categories || [])];
+    const factors = [...list[catIdx].factors];
+    factors[fIdx] = value;
+    list[catIdx] = { ...list[catIdx], factors };
+    updateHeader('categories', list);
+  };
+  const removeFactorRow = (catIdx: number, fIdx: number) => {
+    const list = [...(header.categories || [])];
+    list[catIdx] = { ...list[catIdx], factors: list[catIdx].factors.filter((_, i) => i !== fIdx) };
+    updateHeader('categories', list);
+  };
+  const loadSampleCategories = () => {
+    const sample: CategoryGroup[] = [
+      { id: 'c1', category: 'Strategic & Policy', factors: ['Government support', 'Regulatory framework', 'Housing policy alignment', 'Green policy'] },
+      { id: 'c2', category: 'Supply Chain Integration & Collaboration', factors: ['Early involvement of key participants', 'Stakeholder collaboration', 'Integrated planning', 'Supplier partnerships', 'Information sharing', 'Shared Key Performance Indicators'] },
+      { id: 'c3', category: 'Risk & Resilience Management', factors: ['Risk assessment', 'Contingency planning', 'Supplier diversification', 'Real-time monitoring'] },
+      { id: 'c4', category: 'Demand & Production Planning', factors: ['Demand forecasting', 'Integrated production scheduling', 'Delivery coordination'] },
+      { id: 'c5', category: 'Design & Standardization', factors: ['Designers\' experience', 'Design for Manufacture & Assembly', 'Design accuracy', 'Early design freeze', 'Design standardization'] },
+      { id: 'c6', category: 'Manufacturing & Quality Assurance', factors: ['Manufacturer experience', 'Production technology', 'Quality control', 'Standardized processes', 'Skilled workforce'] },
+      { id: 'c7', category: 'Logistics & Transportation', factors: ['Transport planning', 'Infrastructure availability', 'Just-In-Time delivery'] },
+      { id: 'c8', category: 'Performance Monitoring & Human Resource', factors: ['Performance measurement', 'Training & capacity building', 'Leadership commitment'] },
+    ];
+    updateHeader('categories', sample);
+    toast.success('Sample categories loaded');
+  };
 
   const addQuestion = () => {
     const newQ: Question = {
@@ -218,6 +267,88 @@ const CreateSurvey = () => {
               <div className="space-y-2">
                 <Label>Researcher Email</Label>
                 <Input type="email" value={header.researcherEmail} onChange={e => updateHeader('researcherEmail', e.target.value)} placeholder="you@university.edu" maxLength={150} />
+              </div>
+
+              {/* Methodology fields */}
+              <div className="md:col-span-2 space-y-2">
+                <Label>Objective of the Study</Label>
+                <Textarea value={header.objective || ''} onChange={e => updateHeader('objective', e.target.value)} placeholder="State the main objective(s) of your study..." rows={3} maxLength={1000} />
+              </div>
+              <div className="md:col-span-2 space-y-2">
+                <Label>Method Description</Label>
+                <Textarea value={header.methodDescription || ''} onChange={e => updateHeader('methodDescription', e.target.value)} placeholder="Briefly describe the method (e.g. AHP–ISM–Quadrant Analysis)..." rows={3} maxLength={1500} />
+              </div>
+              <div className="md:col-span-2 space-y-2">
+                <Label>Instruction Description</Label>
+                <Textarea value={header.instructionDescription || ''} onChange={e => updateHeader('instructionDescription', e.target.value)} placeholder="General instructions for completing the questionnaire..." rows={3} maxLength={1500} />
+              </div>
+              <div className="md:col-span-2 space-y-2">
+                <Label>Example Description</Label>
+                <Textarea value={header.exampleDescription || ''} onChange={e => updateHeader('exampleDescription', e.target.value)} placeholder='e.g. CASE 1: If factor "A" is extremely important than "B" mark "9" to the LEFT of the center...' rows={4} maxLength={2000} />
+              </div>
+
+              {/* Categories × Success Factors table */}
+              <div className="md:col-span-2 space-y-3 pt-2 border-t border-border">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div>
+                    <Label className="text-base">Categories & Success Factors</Label>
+                    <p className="text-xs text-muted-foreground">Editable table shown to respondents for context.</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button type="button" variant="outline" size="sm" onClick={loadSampleCategories}>
+                      Load sample
+                    </Button>
+                    <Button type="button" variant="outline" size="sm" onClick={addCategory}>
+                      <Plus className="w-3 h-3 mr-1" /> Add category
+                    </Button>
+                  </div>
+                </div>
+
+                {(header.categories || []).length === 0 && (
+                  <p className="text-xs text-muted-foreground italic">No categories yet. Click "Add category" or "Load sample".</p>
+                )}
+
+                <div className="space-y-3">
+                  {(header.categories || []).map((cat, ci) => (
+                    <div key={cat.id} className="rounded-lg border border-border p-3 space-y-2 bg-secondary/30">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground w-6">{ci + 1}.</span>
+                        <Input
+                          value={cat.category}
+                          onChange={e => updateCategory(ci, { category: e.target.value })}
+                          placeholder="Category name (e.g. Strategic & Policy)"
+                          className="flex-1 font-medium"
+                          maxLength={150}
+                        />
+                        <Button type="button" variant="ghost" size="icon" onClick={() => removeCategory(ci)} className="text-destructive shrink-0">
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
+                      <div className="pl-8 space-y-1.5">
+                        {cat.factors.map((f, fi) => (
+                          <div key={fi} className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground">•</span>
+                            <Input
+                              value={f}
+                              onChange={e => updateFactorRow(ci, fi, e.target.value)}
+                              placeholder={`Success factor ${fi + 1}`}
+                              className="flex-1 h-8 text-sm"
+                              maxLength={200}
+                            />
+                            {cat.factors.length > 1 && (
+                              <Button type="button" variant="ghost" size="icon" onClick={() => removeFactorRow(ci, fi)} className="h-7 w-7">
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            )}
+                          </div>
+                        ))}
+                        <Button type="button" variant="ghost" size="sm" onClick={() => addFactorRow(ci)} className="h-7 text-xs">
+                          <Plus className="w-3 h-3 mr-1" /> Add success factor
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}

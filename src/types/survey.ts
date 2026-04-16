@@ -41,6 +41,18 @@ export interface Survey {
   createdAt: string;
   status: 'draft' | 'active' | 'closed';
   responseCount: number;
+  /** When true, the respondent identity form (university header + identity fields) is shown above the questions. */
+  collectIdentity?: boolean;
+}
+
+export interface RespondentIdentity {
+  fullName: string;
+  organization: string;
+  position: string;
+  email: string;
+  phone: string;
+  yearsExperience: string;
+  notes: string;
 }
 
 // ISM answer: record of "factorA_factorB" -> "→" | "←" | "↔" | "×"
@@ -51,4 +63,5 @@ export interface SurveyResponse {
   answers: Record<string, string | string[] | Record<string, string | number>>;
   submittedAt: string;
   respondentId?: string;
+  identity?: RespondentIdentity;
 }

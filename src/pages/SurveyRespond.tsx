@@ -13,8 +13,14 @@ import { useSurveyStore } from '@/store/surveyStore';
 import type { Question } from '@/types/survey';
 import ISMPairwiseQuestion from '@/components/survey/ISMPairwiseQuestion';
 import AHPPairwiseQuestion from '@/components/survey/AHPPairwiseQuestion';
+import RespondentIdentityForm from '@/components/survey/RespondentIdentityForm';
+import type { RespondentIdentity } from '@/types/survey';
 import { FileText, Send, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
+
+const EMPTY_IDENTITY: RespondentIdentity = {
+  fullName: '', organization: '', position: '', email: '', phone: '', yearsExperience: '', notes: '',
+};
 
 const SurveyRespond = () => {
   const { id } = useParams();
@@ -22,6 +28,7 @@ const SurveyRespond = () => {
   const store = useSurveyStore();
   const survey = store.getSurvey(id || '');
   const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [identity, setIdentity] = useState<RespondentIdentity>(EMPTY_IDENTITY);
   const [submitted, setSubmitted] = useState(false);
 
   if (!survey) {
@@ -55,7 +62,17 @@ const SurveyRespond = () => {
       toast.error(`Please answer all required questions (${missing.length} remaining)`);
       return;
     }
-    store.addResponse({ surveyId: survey.id, answers });
+    if (survey.collectIdentity) {
+      if (!identity.fullName.trim() || !identity.organization.trim()) {
+        toast.error('Please provide at least your Name and Institution.');
+        return;
+      }
+    }
+    store.addResponse({
+      surveyId: survey.id,
+      answers,
+      ...(survey.collectIdentity ? { identity } : {}),
+    });
     setSubmitted(true);
   };
 
@@ -198,6 +215,10 @@ const SurveyRespond = () => {
           <Progress value={progress} className="h-2" />
           <p className="text-xs text-muted-foreground mt-1 text-right">{Math.round(progress)}% complete</p>
         </div>
+
+        {survey.collectIdentity && (
+          <RespondentIdentityForm value={identity} onChange={setIdentity} />
+        )}
 
         {survey.instructions && (
           <Card className="p-4 mb-6 bg-primary/5 border-primary/20">

@@ -55,6 +55,67 @@ const RespondentIdentityForm = ({ value, onChange, header }: Props) => {
         </div>
       )}
 
+      {/* Methodology context blocks */}
+      {header && (header.objective || header.methodDescription || header.instructionDescription || header.exampleDescription) && (
+        <div className="mb-6 pb-6 border-b border-border space-y-4">
+          {header.objective && (
+            <div>
+              <h3 className="text-sm font-semibold mb-1">Objective of the Study</h3>
+              <p className="text-sm text-muted-foreground whitespace-pre-line">{header.objective}</p>
+            </div>
+          )}
+          {header.methodDescription && (
+            <div>
+              <h3 className="text-sm font-semibold mb-1">Method</h3>
+              <p className="text-sm text-muted-foreground whitespace-pre-line">{header.methodDescription}</p>
+            </div>
+          )}
+          {header.instructionDescription && (
+            <div>
+              <h3 className="text-sm font-semibold mb-1">Instructions</h3>
+              <p className="text-sm text-muted-foreground whitespace-pre-line">{header.instructionDescription}</p>
+            </div>
+          )}
+          {header.exampleDescription && (
+            <div className="rounded-md bg-primary/5 border border-primary/20 p-3">
+              <h3 className="text-sm font-semibold mb-1">Example</h3>
+              <p className="text-xs text-muted-foreground whitespace-pre-line">{header.exampleDescription}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Categories × Success Factors table */}
+      {header?.categories && header.categories.length > 0 && (
+        <div className="mb-6 pb-6 border-b border-border">
+          <h3 className="text-sm font-semibold mb-2">Categories & Success Factors</h3>
+          <div className="overflow-x-auto rounded-md border border-border">
+            <table className="w-full text-sm">
+              <thead className="bg-secondary/50">
+                <tr>
+                  <th className="text-left px-3 py-2 font-semibold w-1/3">Category</th>
+                  <th className="text-left px-3 py-2 font-semibold">Success Factors</th>
+                </tr>
+              </thead>
+              <tbody>
+                {header.categories.map(cat => (
+                  <tr key={cat.id} className="border-t border-border align-top">
+                    <td className="px-3 py-2 font-medium text-foreground">{cat.category || '—'}</td>
+                    <td className="px-3 py-2 text-muted-foreground">
+                      <ul className="list-disc pl-5 space-y-0.5">
+                        {cat.factors.filter(f => f.trim()).map((f, i) => (
+                          <li key={i}>{f}</li>
+                        ))}
+                      </ul>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {/* Respondent Identity Fields */}
       <div>
         <h3 className="font-semibold mb-1">Respondent Information</h3>

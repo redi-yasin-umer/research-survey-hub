@@ -217,7 +217,7 @@ const SurveyRespond = () => {
         </div>
 
         {survey.collectIdentity && (
-          <RespondentIdentityForm value={identity} onChange={setIdentity} />
+          <RespondentIdentityForm value={identity} onChange={setIdentity} header={survey.institutionalHeader} />
         )}
 
         {survey.instructions && (

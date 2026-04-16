@@ -30,6 +30,18 @@ export interface Question {
   pairs?: PairwisePair[]; // if empty, auto-generate all combinations
 }
 
+export interface InstitutionalHeader {
+  university: string;
+  school?: string;
+  department?: string;
+  researchTitle?: string;
+  purposeStatement?: string;
+  researcherName?: string;
+  researcherPhone?: string;
+  researcherEmail?: string;
+  advisorName?: string;
+}
+
 export interface Survey {
   id: string;
   title: string;
@@ -41,8 +53,10 @@ export interface Survey {
   createdAt: string;
   status: 'draft' | 'active' | 'closed';
   responseCount: number;
-  /** When true, the respondent identity form (university header + identity fields) is shown above the questions. */
+  /** When true, the respondent identity form (institutional header + identity fields) is shown above the questions. */
   collectIdentity?: boolean;
+  /** Custom institutional header — fully editable per survey so any researcher worldwide can use it. */
+  institutionalHeader?: InstitutionalHeader;
 }
 
 export interface RespondentIdentity {

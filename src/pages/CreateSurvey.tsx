@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useSurveyStore } from '@/store/surveyStore';
-import type { Question, QuestionType, QuestionOption, PairwiseFactor, InstitutionalHeader } from '@/types/survey';
+import type { Question, QuestionType, QuestionOption, PairwiseFactor, InstitutionalHeader, CategoryGroup } from '@/types/survey';
 import { Plus, Trash2, GripVertical, Save, ArrowLeft, GraduationCap } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -38,9 +38,58 @@ const CreateSurvey = () => {
     university: '', school: '', department: '', researchTitle: '',
     purposeStatement: '', researcherName: '', researcherPhone: '',
     researcherEmail: '', advisorName: '',
+    objective: '', methodDescription: '', instructionDescription: '',
+    exampleDescription:
+      'CASE 1: If you think factor "A" is extremely important than factor "B" mark "9" to the LEFT of the center.\nCASE 2: If you think factor "B" is extremely important than factor "A" mark "9" to the RIGHT of the center.',
+    categories: [],
   });
-  const updateHeader = (field: keyof InstitutionalHeader, v: string) =>
+  const updateHeader = <K extends keyof InstitutionalHeader>(field: K, v: InstitutionalHeader[K]) =>
     setHeader(prev => ({ ...prev, [field]: v }));
+
+  // Category table helpers
+  const addCategory = () => {
+    const next: CategoryGroup = { id: `cat_${Date.now()}`, category: '', factors: [''] };
+    updateHeader('categories', [...(header.categories || []), next]);
+  };
+  const updateCategory = (idx: number, patch: Partial<CategoryGroup>) => {
+    const list = [...(header.categories || [])];
+    list[idx] = { ...list[idx], ...patch };
+    updateHeader('categories', list);
+  };
+  const removeCategory = (idx: number) => {
+    updateHeader('categories', (header.categories || []).filter((_, i) => i !== idx));
+  };
+  const addFactorRow = (catIdx: number) => {
+    const list = [...(header.categories || [])];
+    list[catIdx] = { ...list[catIdx], factors: [...list[catIdx].factors, ''] };
+    updateHeader('categories', list);
+  };
+  const updateFactorRow = (catIdx: number, fIdx: number, value: string) => {
+    const list = [...(header.categories || [])];
+    const factors = [...list[catIdx].factors];
+    factors[fIdx] = value;
+    list[catIdx] = { ...list[catIdx], factors };
+    updateHeader('categories', list);
+  };
+  const removeFactorRow = (catIdx: number, fIdx: number) => {
+    const list = [...(header.categories || [])];
+    list[catIdx] = { ...list[catIdx], factors: list[catIdx].factors.filter((_, i) => i !== fIdx) };
+    updateHeader('categories', list);
+  };
+  const loadSampleCategories = () => {
+    const sample: CategoryGroup[] = [
+      { id: 'c1', category: 'Strategic & Policy', factors: ['Government support', 'Regulatory framework', 'Housing policy alignment', 'Green policy'] },
+      { id: 'c2', category: 'Supply Chain Integration & Collaboration', factors: ['Early involvement of key participants', 'Stakeholder collaboration', 'Integrated planning', 'Supplier partnerships', 'Information sharing', 'Shared Key Performance Indicators'] },
+      { id: 'c3', category: 'Risk & Resilience Management', factors: ['Risk assessment', 'Contingency planning', 'Supplier diversification', 'Real-time monitoring'] },
+      { id: 'c4', category: 'Demand & Production Planning', factors: ['Demand forecasting', 'Integrated production scheduling', 'Delivery coordination'] },
+      { id: 'c5', category: 'Design & Standardization', factors: ['Designers\' experience', 'Design for Manufacture & Assembly', 'Design accuracy', 'Early design freeze', 'Design standardization'] },
+      { id: 'c6', category: 'Manufacturing & Quality Assurance', factors: ['Manufacturer experience', 'Production technology', 'Quality control', 'Standardized processes', 'Skilled workforce'] },
+      { id: 'c7', category: 'Logistics & Transportation', factors: ['Transport planning', 'Infrastructure availability', 'Just-In-Time delivery'] },
+      { id: 'c8', category: 'Performance Monitoring & Human Resource', factors: ['Performance measurement', 'Training & capacity building', 'Leadership commitment'] },
+    ];
+    updateHeader('categories', sample);
+    toast.success('Sample categories loaded');
+  };
 
   const addQuestion = () => {
     const newQ: Question = {

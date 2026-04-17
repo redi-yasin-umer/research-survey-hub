@@ -264,12 +264,27 @@ const CreateSurvey = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="container mx-auto px-4 py-8 max-w-3xl">
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center gap-3 mb-6">
           <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')}>
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <h1 className="text-3xl font-bold">Create Survey</h1>
         </div>
+
+        {/* Preset templates */}
+        <Card className="p-4 mb-6 bg-secondary/30">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold">Start from a template</p>
+              <p className="text-xs text-muted-foreground">Loads header, categories & questions for you.</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button type="button" variant="hero" size="sm" onClick={applyAHPPreset}>AHP</Button>
+              <Button type="button" variant="hero-outline" size="sm" onClick={applyISMPreset}>ISM</Button>
+              <Button type="button" variant="outline" size="sm" onClick={applyOthersPreset}>Others</Button>
+            </div>
+          </div>
+        </Card>
 
         {/* Survey Details */}
         <Card className="p-6 mb-6">

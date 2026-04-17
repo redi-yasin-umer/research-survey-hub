@@ -52,13 +52,57 @@ const AHPPairwiseQuestion = ({ question, value, onChange }: Props) => {
         <span className="text-right">Factor B more important →</span>
       </div>
 
+      <div className="md:hidden flex justify-between text-[10px] text-muted-foreground font-medium px-1">
+        <span>← A more important</span>
+        <span>B more important →</span>
+      </div>
+
       <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
         {pairs.map((pair, idx) => {
           const pairKey = `${pair.factorA}_${pair.factorB}`;
           const selected = getSelectedPosition(pairKey);
           return (
-            <div key={pairKey} className="rounded-lg border border-border p-3 hover:border-primary/20 transition-colors">
-              <div className="flex items-center gap-3">
+            <div key={pairKey} className="rounded-lg border border-border p-2 md:p-3 hover:border-primary/20 transition-colors">
+              {/* Mobile labels above scale */}
+              <div className="md:hidden flex items-start justify-between gap-2 mb-2">
+                <span className="text-xs text-muted-foreground shrink-0">{idx + 1}.</span>
+                <span className="text-xs font-medium text-primary flex-1 text-left break-words" title={getFactorLabel(pair.factorA)}>
+                  {getFactorLabel(pair.factorA)}
+                </span>
+                <span className="text-xs text-muted-foreground shrink-0">vs</span>
+                <span className="text-xs font-medium text-accent-foreground flex-1 text-right break-words" title={getFactorLabel(pair.factorB)}>
+                  {getFactorLabel(pair.factorB)}
+                </span>
+              </div>
+
+              {/* Mobile: horizontally scrollable scale */}
+              <div className="md:hidden -mx-2 px-2 overflow-x-auto">
+                <div className="flex gap-1 min-w-max justify-center pb-1">
+                  {SCALE_VALUES.map((sv, pos) => (
+                    <button
+                      key={pos}
+                      onClick={() => setPairValue(pairKey, pos)}
+                      title={`${SCALE_LABELS[pos]} (${sv})`}
+                      className={cn(
+                        'w-9 h-9 rounded text-xs font-medium transition-all border shrink-0',
+                        pos === 4 ? 'border-primary/40' : 'border-border',
+                        selected === pos
+                          ? pos < 4
+                            ? 'bg-primary text-primary-foreground border-primary scale-110'
+                            : pos === 4
+                            ? 'bg-muted-foreground text-background border-muted-foreground scale-110'
+                            : 'bg-accent-foreground text-accent border-accent-foreground scale-110'
+                          : 'hover:bg-secondary'
+                      )}
+                    >
+                      {sv}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Desktop: inline row */}
+              <div className="hidden md:flex items-center gap-3">
                 <span className="text-xs text-muted-foreground w-5 shrink-0">{idx + 1}.</span>
                 <span className="text-xs font-medium text-primary flex-1 text-right min-w-0 truncate" title={getFactorLabel(pair.factorA)}>
                   {getFactorLabel(pair.factorA)}

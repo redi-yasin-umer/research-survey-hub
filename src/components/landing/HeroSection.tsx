@@ -34,9 +34,6 @@ const HeroSection = () => {
               Start Creating
               <ArrowRight className="w-5 h-5" />
             </Button>
-            <Button variant="hero-outline" size="xl" onClick={() => navigate('/survey/1')}>
-              Try Demo Survey
-            </Button>
           </div>
 
           {/* Stats */}

@@ -9,8 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useSurveyStore } from '@/store/surveyStore';
-import type { Question, QuestionType, QuestionOption, PairwiseFactor, InstitutionalHeader, CategoryGroup } from '@/types/survey';
-import { Plus, Trash2, GripVertical, Save, ArrowLeft, GraduationCap, Eye, Printer } from 'lucide-react';
+import type { Question, QuestionType, PairwiseFactor, InstitutionalHeader, CategoryGroup } from '@/types/survey';
+import { Plus, Trash2, GripVertical, Save, ArrowLeft, GraduationCap, Printer } from 'lucide-react';
 import { toast } from 'sonner';
 import PresetDialog from '@/components/survey/PresetDialog';
 import QuestionnairePreview from '@/components/survey/QuestionnairePreview';

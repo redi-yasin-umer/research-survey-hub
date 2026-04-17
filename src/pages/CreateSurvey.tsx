@@ -595,6 +595,14 @@ const CreateSurvey = () => {
           </Button>
         </div>
       </div>
+
+      <PresetDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        mode={dialogMode}
+        initial={header}
+        onSubmit={handleDialogSubmit}
+      />
     </div>
   );
 };

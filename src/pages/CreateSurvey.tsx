@@ -287,8 +287,8 @@ const CreateSurvey = () => {
               <p className="text-xs text-muted-foreground">Loads header, categories & questions for you.</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button type="button" variant="hero" size="sm" onClick={applyAHPPreset}>AHP</Button>
-              <Button type="button" variant="hero-outline" size="sm" onClick={applyISMPreset}>ISM</Button>
+              <Button type="button" variant="hero" size="sm" onClick={openAHPDialog}>AHP</Button>
+              <Button type="button" variant="hero-outline" size="sm" onClick={openISMDialog}>ISM</Button>
               <Button type="button" variant="outline" size="sm" onClick={applyOthersPreset}>Others</Button>
             </div>
           </div>

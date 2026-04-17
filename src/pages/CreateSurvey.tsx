@@ -294,6 +294,27 @@ const CreateSurvey = () => {
           </div>
         </Card>
 
+        {/* PDF-style Preview after dialog submit */}
+        {previewMode && (
+          <Card className="p-4 mb-6 bg-secondary/20 border-primary/30">
+            <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
+              <div>
+                <p className="text-sm font-semibold">Questionnaire Preview ({previewMode.toUpperCase()})</p>
+                <p className="text-xs text-muted-foreground">Print-ready preview based on the details you submitted.</p>
+              </div>
+              <div className="flex gap-2">
+                <Button type="button" variant="outline" size="sm" onClick={() => previewMode === 'ahp' ? openAHPDialog() : openISMDialog()}>
+                  Edit details
+                </Button>
+                <Button type="button" variant="hero" size="sm" onClick={() => window.print()}>
+                  <Printer className="w-3 h-3 mr-1" /> Print / PDF
+                </Button>
+              </div>
+            </div>
+            <QuestionnairePreview header={header} questions={questions} mode={previewMode} />
+          </Card>
+        )}
+
         {/* Survey Details */}
         <Card className="p-6 mb-6">
           <h2 className="text-lg font-semibold mb-4">Survey Details</h2>

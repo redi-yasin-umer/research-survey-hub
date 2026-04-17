@@ -76,19 +76,109 @@ const CreateSurvey = () => {
     list[catIdx] = { ...list[catIdx], factors: list[catIdx].factors.filter((_, i) => i !== fIdx) };
     updateHeader('categories', list);
   };
+  const SAMPLE_CATEGORIES: CategoryGroup[] = [
+    { id: 'c1', category: 'Strategic & Policy', factors: ['Government support', 'Regulatory framework', 'Housing policy alignment', 'Green policy'] },
+    { id: 'c2', category: 'Supply Chain Integration & Collaboration', factors: ['Early involvement of key participants', 'Stakeholder collaboration', 'Integrated planning', 'Supplier partnerships', 'Information sharing', 'Shared Key Performance Indicators'] },
+    { id: 'c3', category: 'Risk & Resilience Management', factors: ['Risk assessment', 'Contingency planning', 'Supplier diversification', 'Real-time monitoring'] },
+    { id: 'c4', category: 'Demand & Production Planning', factors: ['Demand forecasting', 'Integrated production scheduling', 'Delivery coordination'] },
+    { id: 'c5', category: 'Design & Standardization', factors: ['Designers\' experience', 'Design for Manufacture & Assembly', 'Design accuracy', 'Early design freeze', 'Design standardization'] },
+    { id: 'c6', category: 'Manufacturing & Quality Assurance', factors: ['Manufacturer experience', 'Production technology', 'Quality control', 'Standardized processes', 'Skilled workforce'] },
+    { id: 'c7', category: 'Logistics & Transportation', factors: ['Transport planning', 'Infrastructure availability', 'Just-In-Time delivery'] },
+    { id: 'c8', category: 'Performance Monitoring & Human Resource', factors: ['Performance measurement', 'Training & capacity building', 'Leadership commitment'] },
+  ];
+
   const loadSampleCategories = () => {
-    const sample: CategoryGroup[] = [
-      { id: 'c1', category: 'Strategic & Policy', factors: ['Government support', 'Regulatory framework', 'Housing policy alignment', 'Green policy'] },
-      { id: 'c2', category: 'Supply Chain Integration & Collaboration', factors: ['Early involvement of key participants', 'Stakeholder collaboration', 'Integrated planning', 'Supplier partnerships', 'Information sharing', 'Shared Key Performance Indicators'] },
-      { id: 'c3', category: 'Risk & Resilience Management', factors: ['Risk assessment', 'Contingency planning', 'Supplier diversification', 'Real-time monitoring'] },
-      { id: 'c4', category: 'Demand & Production Planning', factors: ['Demand forecasting', 'Integrated production scheduling', 'Delivery coordination'] },
-      { id: 'c5', category: 'Design & Standardization', factors: ['Designers\' experience', 'Design for Manufacture & Assembly', 'Design accuracy', 'Early design freeze', 'Design standardization'] },
-      { id: 'c6', category: 'Manufacturing & Quality Assurance', factors: ['Manufacturer experience', 'Production technology', 'Quality control', 'Standardized processes', 'Skilled workforce'] },
-      { id: 'c7', category: 'Logistics & Transportation', factors: ['Transport planning', 'Infrastructure availability', 'Just-In-Time delivery'] },
-      { id: 'c8', category: 'Performance Monitoring & Human Resource', factors: ['Performance measurement', 'Training & capacity building', 'Leadership commitment'] },
-    ];
-    updateHeader('categories', sample);
+    updateHeader('categories', SAMPLE_CATEGORIES);
     toast.success('Sample categories loaded');
+  };
+
+  const applyAHPPreset = () => {
+    setTitle('AHP Questionnaire — Success Factors in Integrated Supply Chain & Logistics for Prefabricated Housing');
+    setDescription('Pairwise comparison of success-factor categories using the Saaty 1–9 scale.');
+    setInstructions('For each pair, mark how much more important one category is than the other. Use the Saaty 1–9 scale (1 = equal, 9 = extreme).');
+    setIsPublic(true);
+    setIsAnonymous(false);
+    setCollectIdentity(true);
+    setHeader({
+      university: 'Adama Science and Technology University',
+      school: 'School of Civil Engineering and Architecture',
+      department: 'Department of Construction Engineering and Management',
+      researchTitle: 'Success Factors and Their Interrelationships in Integrated Supply Chain and Logistics Management for Prefabricated Housing Projects in Ethiopia: An AHP–ISM–Quadrant Analysis Approach',
+      purposeStatement: 'This survey is part of an MSc research. Results will be used strictly for academic purposes and treated with full confidentiality.',
+      researcherName: 'Redi Yasin',
+      researcherPhone: '0923766115',
+      researcherEmail: '',
+      advisorName: 'Fikreyesus Demeke (PhD)',
+      objective: 'To identify and prioritize the success factors and their interrelationships in integrated supply chain and logistics management for prefabricated housing projects.',
+      methodDescription: 'Analytic Hierarchy Process (AHP) combined with Interpretive Structural Modeling (ISM) and Quadrant Analysis.',
+      instructionDescription: 'Compare each pair of categories. Indicate which is more important and by how much on the Saaty 1–9 scale.',
+      exampleDescription:
+        'CASE 1: If you think factor "A" is extremely important than factor "B" mark "9" to the LEFT of the center.\nCASE 2: If you think factor "B" is extremely important than factor "A" mark "9" to the RIGHT of the center.',
+      categories: SAMPLE_CATEGORIES,
+    });
+    const factors: PairwiseFactor[] = SAMPLE_CATEGORIES.map(c => ({ id: c.id, label: c.category }));
+    setQuestions([{
+      id: `q_${Date.now()}`,
+      type: 'ahp_pairwise',
+      title: 'Pairwise comparison of success-factor categories',
+      description: 'Use the Saaty 1–9 scale.',
+      required: true,
+      factors,
+    }]);
+    toast.success('AHP questionnaire preset loaded');
+  };
+
+  const applyISMPreset = () => {
+    setTitle('ISM Questionnaire — Interrelationships among Success Factors');
+    setDescription('Interpretive Structural Modeling pairwise relationship survey.');
+    setInstructions('For each pair, indicate the direction of influence: A→B, A←B, A↔B, or A×B (no relation).');
+    setIsPublic(true);
+    setIsAnonymous(false);
+    setCollectIdentity(true);
+    setHeader({
+      university: 'Adama Science and Technology University',
+      school: 'School of Civil Engineering and Architecture',
+      department: 'Department of Construction Engineering and Management',
+      researchTitle: 'Success Factors and Their Interrelationships in Integrated Supply Chain and Logistics Management for Prefabricated Housing Projects in Ethiopia: An AHP–ISM–Quadrant Analysis Approach',
+      purposeStatement: 'This survey is part of an MSc research. Results will be used strictly for academic purposes and treated with full confidentiality.',
+      researcherName: 'Redi Yasin',
+      researcherPhone: '0923766115',
+      researcherEmail: '',
+      advisorName: 'Fikreyesus Demeke (PhD)',
+      objective: 'To map the interrelationships among the identified success factors using ISM.',
+      methodDescription: 'Interpretive Structural Modeling (ISM) pairwise contextual relationship analysis.',
+      instructionDescription: 'For each pair of factors, indicate the contextual relationship using the symbols below.',
+      exampleDescription: 'A → B : Factor A leads to / influences B\nA ← B : Factor B leads to / influences A\nA ↔ B : A and B influence each other\nA × B : No relationship',
+      categories: SAMPLE_CATEGORIES,
+    });
+    const factors: PairwiseFactor[] = SAMPLE_CATEGORIES.map(c => ({ id: c.id, label: c.category }));
+    setQuestions([{
+      id: `q_${Date.now()}`,
+      type: 'ism_pairwise',
+      title: 'Contextual relationships among success-factor categories',
+      required: true,
+      factors,
+    }]);
+    toast.success('ISM questionnaire preset loaded');
+  };
+
+  const applyOthersPreset = () => {
+    setTitle('');
+    setDescription('');
+    setInstructions('');
+    setIsPublic(true);
+    setIsAnonymous(true);
+    setCollectIdentity(false);
+    setHeader({
+      university: '', school: '', department: '', researchTitle: '',
+      purposeStatement: '', researcherName: '', researcherPhone: '',
+      researcherEmail: '', advisorName: '',
+      objective: '', methodDescription: '', instructionDescription: '',
+      exampleDescription: '',
+      categories: [],
+    });
+    setQuestions([]);
+    toast.success('Cleared — start a custom survey');
   };
 
   const addQuestion = () => {

@@ -10,8 +10,10 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useSurveyStore } from '@/store/surveyStore';
 import type { Question, QuestionType, QuestionOption, PairwiseFactor, InstitutionalHeader, CategoryGroup } from '@/types/survey';
-import { Plus, Trash2, GripVertical, Save, ArrowLeft, GraduationCap } from 'lucide-react';
+import { Plus, Trash2, GripVertical, Save, ArrowLeft, GraduationCap, Eye, Printer } from 'lucide-react';
 import { toast } from 'sonner';
+import PresetDialog from '@/components/survey/PresetDialog';
+import QuestionnairePreview from '@/components/survey/QuestionnairePreview';
 
 const questionTypeLabels: Record<QuestionType, string> = {
   multiple_choice: 'Multiple Choice',
